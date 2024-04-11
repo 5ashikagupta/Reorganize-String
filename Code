@@ -1,0 +1,72 @@
+//Given a string s, rearrange the characters of s so that any two adjacent characters are not the same.
+//Return any possible rearrangement of s or return "" if not possible.
+//Example 1:
+//Input: s = "aab"
+//Output: "aba"
+//Example 2:
+//Input: s = "aaab"
+//Output: ""
+
+class Info{
+    public:
+        char data;
+        int count;
+    Info(char a, int b){
+        data=a;
+        count=b;
+    }
+};
+class compare{
+    public:
+    bool operator()(Info a, Info b){
+        return a.count<b.count;
+    }
+};
+class Solution {
+public:
+    string reorganizeString(string s) {
+        priority_queue<Info,vector<Info>,compare>pq;
+        //make a map
+        //0 index-->a
+        //1 index-->b
+        int freq[26]={0};
+        for (int i=0;i<s.length();i++){
+            char c=s[i];
+            freq[c-'a']++;
+        }
+        for (int j=0;j<26;j++){
+            if (freq[j]>0){
+                Info temp(j+'a',freq[j]);
+                pq.push(temp);
+            }
+        }
+        string ans="";
+        while (pq.size()>1){
+            Info first=pq.top();
+            pq.pop();
+            Info second=pq.top();
+            pq.pop();
+            ans.push_back(first.data);
+            first.count--;
+            ans.push_back(second.data);
+            second.count--;
+            if (first.count > 0){
+                pq.push(first);
+            }
+            if (second.count > 0){
+                pq.push(second);
+            }
+            
+        }
+        if (pq.size()==1){
+            Info elem=pq.top();
+            pq.pop();
+            ans.push_back(elem.data);
+            elem.count--;
+            if (elem.count != 0){
+                return "";
+            }
+        }
+        return ans;
+    }
+};
